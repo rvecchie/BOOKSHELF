@@ -12,6 +12,7 @@
    login e allegato a ogni richiesta che richiede
    autenticazione tramite l'header Authorization.
    ============================================ */
+const API_URL = import.meta.env.VITE_API_URL || '';
 
 // Recupera il token salvato in localStorage
 function getToken() {
