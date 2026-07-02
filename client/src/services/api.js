@@ -11,7 +11,15 @@
    Il token JWT viene salvato in localStorage al
    login e allegato a ogni richiesta che richiede
    autenticazione tramite l'header Authorization.
+
+   API_URL: in locale è undefined, quindi le fetch
+   restano relative (es. '/api/libreria') e passano
+   dal proxy di sviluppo di Vite. In produzione,
+   VITE_API_URL punta all'URL pubblico del backend
+   su Render, perché client e server sono su domini
+   diversi.
    ============================================ */
+
 const API_URL = import.meta.env.VITE_API_URL || '';
 
 // Recupera il token salvato in localStorage
@@ -40,7 +48,7 @@ async function gestisciRisposta(risposta) {
 // --- Auth ---
 
 export async function login(username, password) {
-  const risposta = await fetch('/api/auth/login', {
+  const risposta = await fetch(API_URL + '/api/auth/login', {
     method: 'POST',
     headers: {'Content-Type': 'application/json'},
     body: JSON.stringify({username, password})
@@ -61,14 +69,14 @@ export function isAutenticato() {
 // --- Ricerca libri (proxy Open Library) ---
 
 export async function cercaLibri(query) {
-  const risposta = await fetch('/api/libri/cerca?q=' + encodeURIComponent(query));
+  const risposta = await fetch(API_URL + '/api/libri/cerca?q=' + encodeURIComponent(query));
   return gestisciRisposta(risposta);
 }
 
 // --- Libreria personale (CRUD, richiede token) ---
 
 export async function fetchLibreria() {
-  const risposta = await fetch('/api/libreria', {
+  const risposta = await fetch(API_URL + '/api/libreria', {
     headers: headersAutenticati()
   });
   return gestisciRisposta(risposta);
@@ -76,7 +84,7 @@ export async function fetchLibreria() {
 
 export async function aggiungiLibroApi(libro) {
   console.log('libro nel body', JSON.stringify(libro));
-  const risposta = await fetch('/api/libreria', {
+  const risposta = await fetch(API_URL + '/api/libreria', {
     method: 'POST',
     headers: headersAutenticati(),
     body: JSON.stringify(libro)
@@ -88,7 +96,7 @@ export async function rimuoviLibroApi(id) {
   // L'id di Open Library inizia con /works/...
   // Togliamo lo slash iniziale perché è già nel percorso base della URL
   const idEncoded = encodeURIComponent(id.replace(/^\//, ''));
-  const risposta = await fetch('/api/libreria/' + idEncoded, {
+  const risposta = await fetch(API_URL + '/api/libreria/' + idEncoded, {
     method: 'DELETE',
     headers: headersAutenticati()
   });
@@ -97,7 +105,7 @@ export async function rimuoviLibroApi(id) {
 
 export async function cambiaStatoApi(id, stato) {
   const idEncoded = encodeURIComponent(id.replace(/^\//, ''));
-  const risposta = await fetch('/api/libreria/' + idEncoded + '/stato', {
+  const risposta = await fetch(API_URL + '/api/libreria/' + idEncoded + '/stato', {
     method: 'PATCH',
     headers: headersAutenticati(),
     body: JSON.stringify({stato})
