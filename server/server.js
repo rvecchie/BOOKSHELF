@@ -26,7 +26,7 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 // --- Middleware globali ---
-app.use(cors({origin: ['http://localhost:5173', 'http://localhost:5174', 'https://bookshelf-app-x9kn.onrender.com']}));
+app.use(cors({origin: ['http://localhost:5173', 'http://localhost:5174', 'https://bookshelf-frontend-568b.onrender.com/']}));
 app.use(express.json());
 
 // --- Route ---
